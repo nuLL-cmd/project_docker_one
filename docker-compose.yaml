@@ -1,0 +1,27 @@
+version: '3'
+services:
+  project_docker_one:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: project_docker_one
+    ports:
+      - '8080:8080'
+      - '5005:5005'
+    environment:
+      - ADDITIONAL_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xmx1G -Xms128m -XX:MaxMetaspaceSize=128m
+      - PROFILE=dev
+    links:
+      - db
+  db:
+    image: mysql:5.6
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_DATABASE=spring-docker-mysql
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_PASSWORD=tafnis4028
+      - MYSQL_ROOT_PASSWORD=tafnis4028
+    volumes:
+      - ./docker/volume_mysql:/var/lib/mysql
